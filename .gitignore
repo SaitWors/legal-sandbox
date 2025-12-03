@@ -1,7 +1,16 @@
-node_modules
-.next
-.out
-.venv
+@"
+# python
+venv/
+.venv/
 __pycache__/
+*.pyc
 .pytest_cache/
+
+# node/next
+node_modules/
+apps/frontend/.next/
+apps/frontend/.env.local
+
+# misc
 .DS_Store
+"@ | Out-File -Encoding utf8 .gitignore -Append
