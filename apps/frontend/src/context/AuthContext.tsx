@@ -1,4 +1,5 @@
 "use client";
+<<<<<<< HEAD
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { API_BASE, login as apiLogin, setAccessToken } from "@/lib/api";
 
@@ -16,10 +17,44 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   // One-time boot: try refresh once, then fetch profile if succeeded.
+=======
+
+import React, { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { fetchProfile, login as apiLogin, logout as apiLogout, refreshToken, setAccessToken, type User } from "@/lib/api";
+
+type AuthContextValue = {
+  user: User | null;
+  loading: boolean;
+  login: (username: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
+  isAuthenticated: boolean;
+};
+
+const AuthContext = createContext<AuthContextValue>({
+  user: null,
+  loading: true,
+  login: async () => {},
+  logout: async () => {},
+  refreshUser: async () => {},
+  isAuthenticated: false,
+});
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const refreshUser = async () => {
+    const profile = await fetchProfile();
+    setUser(profile);
+  };
+
+>>>>>>> 73dd6ff (С 1й по 3ю и docker)
   useEffect(() => {
     let mounted = true;
     (async () => {
       try {
+<<<<<<< HEAD
         const r = await fetch(`${API_BASE}/auth/refresh`, {
           method: "POST",
           credentials: "include",
@@ -41,6 +76,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
           if (mounted) setUser(null);
         }
+=======
+        const tokenResponse = await refreshToken();
+        if (!mounted) return;
+        setAccessToken(tokenResponse.access_token, true);
+        const profile = await fetchProfile();
+        if (mounted) setUser(profile);
+>>>>>>> 73dd6ff (С 1й по 3ю и docker)
       } catch {
         if (mounted) setUser(null);
       } finally {
@@ -55,6 +97,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (username: string, password: string) => {
     const data = await apiLogin(username, password);
+<<<<<<< HEAD
     // apiLogin already sets cookie via backend; it returns access_token
     setAccessToken(data.access_token, true);
     // fetch profile
@@ -75,6 +118,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return <AuthContext.Provider value={{ user, loading, login, logout }}>{children}</AuthContext.Provider>;
+=======
+    setAccessToken(data.access_token, true);
+    await refreshUser();
+  };
+
+  const logout = async () => {
+    await apiLogout();
+    setUser(null);
+  };
+
+  const value = useMemo(
+    () => ({ user, loading, login, logout, refreshUser, isAuthenticated: Boolean(user) }),
+    [user, loading],
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+>>>>>>> 73dd6ff (С 1й по 3ю и docker)
 };
 
 export const useAuth = () => useContext(AuthContext);

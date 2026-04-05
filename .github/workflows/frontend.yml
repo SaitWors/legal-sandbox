@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 name: frontend 
 on: [push, pull_request]
 jobs:
   build:
     runs-on:
+=======
+name: frontend
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+>>>>>>> 73dd6ff (С 1й по 3ю и docker)
     defaults:
       run:
         working-directory: apps/frontend
@@ -13,4 +21,8 @@ jobs:
           node-version: '20'
       - run: npm ci
       - run: npm run build
+<<<<<<< HEAD
       - run: npm run lint --if-present 
+=======
+      - run: npm run lint --if-present
+>>>>>>> 73dd6ff (С 1й по 3ю и docker)
