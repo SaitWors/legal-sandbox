@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿# Legal Sandbox — песочница для юридических правок
 
 Одностраничное приложение, которое позволяет загрузить/вставить текст договора, разрезать его на пункты и **найти дубли и конфликты** между ними.
@@ -182,3 +183,81 @@ uvicorn app.main:app --reload
   ```
 
 ---
+=======
+# Legal Sandbox
+
+Product-style fullstack MVP for contract review and document operations.
+
+## Stack
+
+- **Frontend:** Next.js + React + TypeScript
+- **Backend:** FastAPI + SQLModel
+- **Auth:** access token + rotating refresh token
+- **Storage:** local filesystem or S3-compatible object storage (MinIO in Docker)
+- **Infra:** Docker Compose + Nginx + PostgreSQL + MinIO
+
+## What is implemented
+
+### Labs 1–3
+
+- **RBAC:** roles `user`, `manager`, `admin`
+- **Protected routes:** `/legal/sandbox` requires auth, `/admin/users` requires admin
+- **Role-aware UI:** hidden/admin-only actions and role management page
+- **Access + refresh auth:** login, refresh, logout, current user, refresh token rotation and revocation
+- **Layered backend:** API → service → repository
+- **Document registry:** CRUD, filtering, search, sort, pagination
+- **File attachments:** upload, list, protected download link, delete
+- **Validation and error handling:** on client and server
+
+### Docker lab
+
+- FastAPI Dockerfile
+- Next.js Dockerfile (standalone build)
+- `docker-compose.yml` with `frontend`, `api`, `postgres`, `minio`, `nginx`
+- healthchecks and environment-driven configuration
+
+## Role matrix
+
+| Role | Documents | Files | Users/Roles |
+|------|-----------|-------|-------------|
+| user | CRUD only own | CRUD only own | no access |
+| manager | read all, update all, delete own | read/delete all, upload via document access | no access |
+| admin | full access | full access | list users, change roles |
+
+## Local run
+
+### API
+
+```bash
+cd services/api
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+### Frontend
+
+```bash
+cd apps/frontend
+npm ci
+npm run dev
+```
+
+## Docker run
+
+```bash
+docker compose up --build
+```
+
+Open:
+
+- App: `http://localhost`
+- MinIO Console: `http://localhost:9001` (if port is exposed manually later)
+
+## Notes
+
+- First registered user becomes `admin`
+- Default local API base on frontend is `/api/v1`
+- To reset schema locally, set `LS_RESET_DB_ON_START=1`
+>>>>>>> 945d7f9 (lab-1-3-and_Docker)
