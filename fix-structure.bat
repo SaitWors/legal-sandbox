@@ -1,7 +1,7 @@
 @echo off
 echo Исправление структуры проекта...
 
-cd /d C:\dev\legal-sandbox\apps\frontend
+cd /d C:\dev\contract-workspace\apps\frontend
 
 :: 1. Переименуем файлы
 if exist "src\app\layout.tssx" (

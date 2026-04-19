@@ -16,7 +16,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { Finding, Severity } from "@/lib/types";
+import { Finding } from "@/lib/types";
 import SeverityBadge from "./SeverityBadge";
 
 interface FindingListProps {

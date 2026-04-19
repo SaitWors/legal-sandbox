@@ -17,14 +17,15 @@ REFRESH_COOKIE_NAME = os.getenv("LS_REFRESH_COOKIE_NAME", "refresh_token")
 REFRESH_COOKIE_SECURE = os.getenv("LS_REFRESH_COOKIE_SECURE", "0") == "1"
 CORS_ORIGINS = [item.strip() for item in os.getenv("LS_CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000").split(",") if item.strip()]
 
-DB_PATH = os.getenv("LS_DB_PATH", "sqlite+aiosqlite:///./data/legal_sandbox.db")
+DB_PATH = os.getenv("LS_DB_PATH", "sqlite+aiosqlite:///./data/contract_workspace.db")
 RESET_DB_ON_START = os.getenv("LS_RESET_DB_ON_START", "0") == "1"
+SITE_URL = os.getenv("LS_SITE_URL", "http://localhost:3000").rstrip("/")
 
 STORAGE_BACKEND = os.getenv("LS_STORAGE_BACKEND", "local")
 S3_ENDPOINT_URL = os.getenv("LS_S3_ENDPOINT_URL")
 S3_ACCESS_KEY = os.getenv("LS_S3_ACCESS_KEY")
 S3_SECRET_KEY = os.getenv("LS_S3_SECRET_KEY")
-S3_BUCKET = os.getenv("LS_S3_BUCKET", "legal-sandbox")
+S3_BUCKET = os.getenv("LS_S3_BUCKET", "contract-workspace")
 S3_REGION = os.getenv("LS_S3_REGION", "us-east-1")
 S3_PRESIGNED_EXPIRES = int(os.getenv("LS_S3_PRESIGNED_EXPIRES", "900"))
 
@@ -35,3 +36,9 @@ ALLOWED_UPLOAD_TYPES = {
         "text/plain,text/markdown,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ).split(",") if item.strip()
 }
+
+EXTERNAL_API_BASE_URL = os.getenv("LS_EXTERNAL_API_BASE_URL", "https://api.datamuse.com/words")
+EXTERNAL_API_KEY = os.getenv("LS_EXTERNAL_API_KEY", "")
+EXTERNAL_API_TIMEOUT_SECONDS = float(os.getenv("LS_EXTERNAL_API_TIMEOUT_SECONDS", "8"))
+EXTERNAL_API_CACHE_TTL_SECONDS = int(os.getenv("LS_EXTERNAL_API_CACHE_TTL_SECONDS", "300"))
+EXTERNAL_API_MIN_INTERVAL_SECONDS = float(os.getenv("LS_EXTERNAL_API_MIN_INTERVAL_SECONDS", "0.4"))

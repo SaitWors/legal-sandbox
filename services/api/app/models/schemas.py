@@ -1,17 +1,3 @@
-<<<<<<< HEAD
-# services/api/app/models/schemas.py
-from pydantic import BaseModel, Field, EmailStr
-from typing import Optional, List
-from datetime import datetime
-
-class DocumentCreate(BaseModel):
-    title: str = Field(..., min_length=1)
-    text: str = Field(..., min_length=1)
-
-class DocumentUpdate(BaseModel):
-    title: Optional[str] = Field(None, min_length=1)
-    text: Optional[str] = Field(None, min_length=1)
-=======
 from __future__ import annotations
 
 from datetime import datetime
@@ -38,29 +24,11 @@ class DocumentUpdate(BaseModel):
     category: Optional[str] = Field(None, min_length=1, max_length=80)
     status: Optional[DocumentStatus] = None
 
->>>>>>> 945d7f9 (lab-1-3-and_Docker)
 
 class DocumentOut(BaseModel):
     id: int
     title: str
     text: str
-<<<<<<< HEAD
-    owner_id: Optional[int]
-    created_at: datetime
-    updated_at: datetime
-
-    model_config = {"from_attributes": True}  # pydantic v2 style / compatibility
-
-class UserRegister(BaseModel):
-    username: str = Field(..., min_length=3)
-    email: EmailStr
-    password: str = Field(..., min_length=6)
-
-
-class UserLogin(BaseModel):
-    username: str = Field(..., min_length=3)
-    password: str = Field(..., min_length=6)
-=======
     category: str
     status: DocumentStatus
     owner_id: int
@@ -102,28 +70,17 @@ class UserRegister(BaseModel):
 class UserLogin(BaseModel):
     username: str = Field(..., min_length=3, max_length=40)
     password: str = Field(..., min_length=6, max_length=128)
->>>>>>> 945d7f9 (lab-1-3-and_Docker)
 
 
 class UserOut(BaseModel):
     id: int
     username: str
-<<<<<<< HEAD
-    email: Optional[EmailStr]
-=======
     email: Optional[EmailStr] = None
->>>>>>> 945d7f9 (lab-1-3-and_Docker)
     role: str
     created_at: datetime
 
     model_config = {"from_attributes": True}
 
-<<<<<<< HEAD
-class TokenResponse(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
-    expires_in: int
-=======
 
 class UserRoleUpdate(BaseModel):
     role: Literal["user", "manager", "admin"]
@@ -154,4 +111,16 @@ class AttachmentListResponse(BaseModel):
 class DownloadLinkResponse(BaseModel):
     url: str
     expires_in: int
->>>>>>> 945d7f9 (lab-1-3-and_Docker)
+
+
+class ExternalTermInsight(BaseModel):
+    term: str
+    relevance: float = Field(ge=0, le=1)
+    tags: list[str] = Field(default_factory=list)
+
+
+class ExternalTermsResponse(BaseModel):
+    source: str
+    query: str
+    items: list[ExternalTermInsight]
+    cached: bool = False

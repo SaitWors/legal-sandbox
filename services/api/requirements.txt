@@ -4,19 +4,11 @@ sqlmodel
 aiosqlite
 asyncpg
 python-jose[cryptography]
-<<<<<<< HEAD
 passlib==1.7.4
 bcrypt==4.0.1
-=======
-passlib[bcrypt]
->>>>>>> 945d7f9 (lab-1-3-and_Docker)
 python-multipart
 email-validator
 boto3
 itsdangerous
 pytest
-<<<<<<< HEAD
 httpx
-=======
-httpx
->>>>>>> 945d7f9 (lab-1-3-and_Docker)

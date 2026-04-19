@@ -1,37 +1,34 @@
-<<<<<<< HEAD
-// apps/frontend/src/app/layout.tsx
-import "./globals.css";
-import { AuthProvider } from "@/context/AuthContext";
-import { TooltipProvider } from "@/components/ui/tooltip";
-=======
-import type { ReactNode } from "react";
-import "./globals.css";
-import { AuthProvider } from "@/context/AuthContext";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import Header from "@/components/Header";
->>>>>>> 945d7f9 (lab-1-3-and_Docker)
+import type { Metadata } from "next";
 
-export default function RootLayout({
-  children,
-}: {
-<<<<<<< HEAD
-  children: React.ReactNode;
-=======
-  children: ReactNode;
->>>>>>> 945d7f9 (lab-1-3-and_Docker)
-}) {
+import Header from "@/components/Header";
+import Providers from "@/app/providers";
+
+import "./globals.css";
+
+export const metadata: Metadata = {
+  metadataBase: new URL("http://localhost"),
+  title: {
+    default: "Contract Workspace",
+    template: "%s | Contract Workspace",
+  },
+  description: "Рабочее пространство для анализа договоров, управления документами и безопасной загрузки вложений.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Contract Workspace",
+    description: "Платформа для проверки договоров, ролевого доступа и защищённой работы с файлами.",
+    type: "website",
+    url: "http://localhost",
+  },
+};
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ru">
-      <body>
-        <AuthProvider>
-          <TooltipProvider delayDuration={0}>
-<<<<<<< HEAD
-=======
-            <Header />
->>>>>>> 945d7f9 (lab-1-3-and_Docker)
-            {children}
-          </TooltipProvider>
-        </AuthProvider>
+      <body className="min-h-screen bg-slate-50 text-slate-950 antialiased">
+        <Providers>
+          <Header />
+          <main>{children}</main>
+        </Providers>
       </body>
     </html>
   );
