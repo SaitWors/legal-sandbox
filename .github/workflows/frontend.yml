@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NEXT_TELEMETRY_DISABLED: "1"
+      NEXT_PRIVATE_STANDALONE: "1"
     defaults:
       run:
         working-directory: apps/frontend
@@ -27,7 +28,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run smoke unit tests
+      - name: Run smoke tests
         run: npm run test:smoke --if-present
 
       - name: Run lint
@@ -51,12 +52,11 @@ jobs:
         uses: docker/setup-buildx-action@v4
 
       - name: Build frontend image
-        uses: docker/build-push-action@v7
+        uses: docker/build-push-action@v6
         with:
           context: apps/frontend
           file: apps/frontend/Dockerfile
           push: false
-          load: false
           build-args: |
             NEXT_PUBLIC_API_BASE=/api/v1
           tags: legal-sandbox-frontend:test
