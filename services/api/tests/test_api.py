@@ -1,27 +1,10 @@
-import os
-from pathlib import Path
-
-from fastapi.testclient import TestClient
-
-TEST_DB = Path(__file__).resolve().parent / "test.db"
-os.environ.setdefault("LS_DB_PATH", f"sqlite+aiosqlite:///{TEST_DB}")
-os.environ.setdefault("LS_STORAGE_BACKEND", "local")
-os.environ.setdefault("LS_RESET_DB_ON_START", "1")
-
-from app.main import create_app  # noqa: E402
-
-
-app = create_app()
-client = TestClient(app)
-
-
-def test_health() -> None:
+def test_health(client) -> None:
     response = client.get("/api/v1/health")
     assert response.status_code == 200
     assert response.json()["status"] == "ok"
 
 
-def test_segment_returns_clauses() -> None:
+def test_segment_returns_clauses(client) -> None:
     payload = {"text": "1. Первый пункт.\n\n2. Второй пункт."}
     response = client.post("/api/v1/segment/", json=payload)
     assert response.status_code == 200
@@ -30,7 +13,7 @@ def test_segment_returns_clauses() -> None:
     assert len(body["clauses"]) >= 2
 
 
-def test_analyze_returns_findings_shape() -> None:
+def test_analyze_returns_findings_shape(client) -> None:
     payload = {
         "text": "1. Исполнитель вправе привлекать субподрядчиков.\n2. Исполнитель не вправе привлекать третьих лиц без согласия.",
         "dup_threshold": 0.85,
@@ -42,7 +25,7 @@ def test_analyze_returns_findings_shape() -> None:
     assert "findings" in body
 
 
-def test_auth_and_documents_flow() -> None:
+def test_auth_and_documents_flow(client) -> None:
     register = client.post(
         "/api/v1/auth/register",
         json={"username": "admin_user", "email": "admin@example.com", "password": "secret123"},

@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test:smoke": "node --test tests/*.mjs"
   },
   "dependencies": {
     "@radix-ui/react-separator": "^1.1.8",
@@ -23,21 +25,6 @@
     "react-dom": "19.2.0",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7"
-  },
-  "rules": {
-    "at-rule-no-unknown": [
-      true,
-      {
-        "ignoreAtRules": [
-          "tailwind",
-          "apply",
-          "layer",
-          "variants",
-          "responsive",
-          "screen"
-        ]
-      }
-    ]
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",

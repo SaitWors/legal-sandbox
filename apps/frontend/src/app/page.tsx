@@ -1,97 +1,98 @@
-<<<<<<< HEAD
-// apps/frontend/src/app/page.tsx
-"use client";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { AuthProvider, useAuth } from "@/context/AuthContext";
-import LegalSandbox from "@/components/legal/LegalSandbox";
 
-function HomeContent() {
-  const { user, loading } = useAuth();
+export const metadata: Metadata = {
+  title: "Проверка договоров и управление юридическими документами",
+  description: "Contract Workspace помогает искать конфликты в договорах, хранить документы по ролям и безопасно работать с файлами.",
+  alternates: { canonical: "/" },
+};
+
+const features = [
+  {
+    title: "Анализ документов",
+    text: "Сегментация текста, поиск дублей и конфликтов, быстрый переход к спорным пунктам.",
+  },
+  {
+    title: "Ролевой доступ",
+    text: "Пользователь, менеджер и администратор работают по своим полномочиям без лишних привилегий.",
+  },
+  {
+    title: "Файлы и объектное хранилище",
+    text: "Вложения к документам, защищённые ссылки на скачивание и S3-compatible режим через MinIO.",
+  },
+  {
+    title: "Публичная витрина и интеграции",
+    text: "Индексируемые страницы, sitemap/robots и отдельный слой интеграции со сторонним API подсказок терминов.",
+  },
+];
+
+const stats = [
+  { label: "Ролевой контроль", value: "RBAC" },
+  { label: "Сессии", value: "Access + Refresh" },
+  { label: "Хранилище", value: "Local / S3" },
+];
+
+export default function HomePage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Contract Workspace",
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Web",
+    description: "Рабочее пространство для анализа договоров и управления юридическими документами.",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  };
+
   return (
-    <div className="p-6">
-      <header className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold">Legal Sandbox</h1>
+    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
+      <section className="grid gap-8 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm lg:grid-cols-[1.4fr_1fr] lg:p-12">
         <div>
-          {!loading && !user && (
-            <div className="flex gap-2">
-              <Link href="/login">
-                <button className="btn">Войти</button>
-              </Link>
-              <Link href="/register">
-                <button className="btn-outline">Регистрация</button>
-              </Link>
-            </div>
-          )}
-          {!loading && user && (
-            <div className="text-sm">Привет, {user.username}</div>
-          )}
-        </div>
-      </header>
-
-      <main>
-        <LegalSandbox />
-      </main>
-    </div>
-  );
-}
-
-export default function Page() {
-  return (
-    <AuthProvider>
-      <HomeContent />
-    </AuthProvider>
-=======
-import Link from "next/link";
-
-export default function Page() {
-  return (
-    <main className="min-h-screen bg-linear-to-b from-slate-50 to-white px-6 py-12">
-      <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
-        <section>
-          <div className="mb-4 inline-flex rounded-full border bg-white px-3 py-1 text-xs uppercase tracking-[0.18em] text-slate-600 shadow-sm">
-            Legal Sandbox Platform
+          <div className="mb-4 inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
+            Production-ready workspace
           </div>
-          <h1 className="text-4xl font-bold tracking-tight text-slate-950 md:text-5xl">
-            Анализируй договоры как продуктовая команда, а не как учебный проект.
+          <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
+            Contract Workspace — безопасное приложение для проверки договоров и работы с документами
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-slate-600">
-            Веб-приложение для сегментации текста, поиска дублей и конфликтов, управления версиями документов и безопасной работы через JWT-защищённый API.
+          <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-600">
+            Платформа объединяет анализ текста, документооборот, разграничение доступа, восстановление сессии,
+            загрузку вложений и публичные продуктовые страницы в единой Docker-готовой структуре.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/legal/sandbox" className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-medium text-white shadow-sm">
+            <Link href="/workspace" className="rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-slate-700">
               Открыть рабочую область
             </Link>
-            <Link href="/login" className="rounded-2xl border bg-white px-5 py-3 text-sm font-medium text-slate-700 shadow-sm">
-              Войти
-            </Link>
-            <Link href="/register" className="rounded-2xl border bg-white px-5 py-3 text-sm font-medium text-slate-700 shadow-sm">
-              Создать аккаунт
+            <Link href="/legal" className="rounded-full border border-slate-200 px-5 py-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+              Посмотреть публичную страницу
             </Link>
           </div>
-        </section>
+        </div>
 
-        <section className="rounded-[2rem] border bg-white p-6 shadow-sm">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl bg-slate-50 p-4">
-              <div className="text-sm font-semibold text-slate-900">UI/UX</div>
-              <p className="mt-2 text-sm text-slate-600">Готовый адаптивный интерфейс, вкладки, карточки пунктов и экспорт отчётов.</p>
-            </div>
-            <div className="rounded-2xl bg-slate-50 p-4">
-              <div className="text-sm font-semibold text-slate-900">Backend</div>
-              <p className="mt-2 text-sm text-slate-600">FastAPI, SQLite, CRUD для документов, сегментация и анализ через API.</p>
-            </div>
-            <div className="rounded-2xl bg-slate-50 p-4">
-              <div className="text-sm font-semibold text-slate-900">Security</div>
-              <p className="mt-2 text-sm text-slate-600">JWT access token, refresh cookie и защита приватных эндпоинтов.</p>
-            </div>
-            <div className="rounded-2xl bg-slate-50 p-4">
-              <div className="text-sm font-semibold text-slate-900">Integration</div>
-              <p className="mt-2 text-sm text-slate-600">Фронтенд работает с сервером, но умеет безопасно откатиться на локальный режим.</p>
-            </div>
+        <div className="grid gap-4 rounded-[1.5rem] bg-slate-950 p-6 text-white">
+          <div>
+            <p className="text-xs uppercase tracking-[0.22em] text-slate-400">Ключевые возможности</p>
+            <p className="mt-2 text-2xl font-semibold">Контроль документов без лишнего шума</p>
           </div>
-        </section>
-      </div>
-    </main>
->>>>>>> 73dd6ff (С 1й по 3ю и docker)
+          <div className="grid gap-3 text-sm text-slate-300">
+            {stats.map((item) => (
+              <div key={item.label} className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div className="text-lg font-semibold text-white">{item.value}</div>
+                <div className="mt-1">{item.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {features.map((feature) => (
+          <article key={feature.title} className="rounded-[1.5rem] border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-slate-900">{feature.title}</h2>
+            <p className="mt-3 text-sm leading-7 text-slate-600">{feature.text}</p>
+          </article>
+        ))}
+      </section>
+    </div>
   );
 }

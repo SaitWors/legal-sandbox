@@ -1,71 +1,114 @@
 services:
   postgres:
     image: postgres:16-alpine
+    restart: unless-stopped
     environment:
-      POSTGRES_DB: legal_sandbox
-      POSTGRES_USER: legal_user
-      POSTGRES_PASSWORD: legal_pass
+      POSTGRES_DB: ${POSTGRES_DB:-contract_workspace}
+      POSTGRES_USER: ${POSTGRES_USER:-legal_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-legal_pass_dev}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app_net
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U legal_user -d legal_sandbox"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 10
+      start_period: 10s
 
   minio:
     image: minio/minio:latest
+    restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
     volumes:
       - minio_data:/data
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
+    networks:
+      - app_net
+
+  minio-init:
+    image: minio/mc:latest
+    restart: "no"
+    depends_on:
+      minio:
+        condition: service_started
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+      LS_S3_BUCKET: ${LS_S3_BUCKET:-contract-workspace}
+    networks:
+      - app_net
+    entrypoint: >
+      /bin/sh -c '
+      until mc alias set local http://minio:9000 "$${MINIO_ROOT_USER}" "$${MINIO_ROOT_PASSWORD}"; do
+        echo "Waiting for MinIO...";
+        sleep 2;
+      done;
+      mc mb --ignore-existing "local/$${LS_S3_BUCKET}";
+      echo "MinIO bucket is ready";
+      '
 
   api:
     build:
       context: ./services/api
+    restart: unless-stopped
     environment:
-      LS_DB_PATH: postgresql+asyncpg://legal_user:legal_pass@postgres:5432/legal_sandbox
-      LS_CORS_ORIGINS: http://localhost,http://127.0.0.1,http://nginx
+      APP_ENV: ${APP_ENV:-production}
+      LS_SECRET_KEY: ${LS_SECRET_KEY:-change-me-in-real-env}
+      LS_DB_PATH: postgresql+asyncpg://${POSTGRES_USER:-legal_user}:${POSTGRES_PASSWORD:-legal_pass_dev}@postgres:5432/${POSTGRES_DB:-contract_workspace}
+      LS_CORS_ORIGINS: ${LS_CORS_ORIGINS:-http://localhost,http://127.0.0.1,http://nginx}
       LS_STORAGE_BACKEND: s3
       LS_S3_ENDPOINT_URL: http://minio:9000
-      LS_S3_ACCESS_KEY: minioadmin
-      LS_S3_SECRET_KEY: minioadmin
-      LS_S3_BUCKET: legal-sandbox
-      LS_REFRESH_COOKIE_SECURE: "0"
+      LS_S3_ACCESS_KEY: ${MINIO_ROOT_USER:-minioadmin}
+      LS_S3_SECRET_KEY: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+      LS_S3_BUCKET: ${LS_S3_BUCKET:-contract-workspace}
+      LS_REFRESH_COOKIE_SECURE: ${LS_REFRESH_COOKIE_SECURE:-0}
+      LS_SITE_URL: ${LS_SITE_URL:-http://localhost}
+      LS_EXTERNAL_API_BASE_URL: ${LS_EXTERNAL_API_BASE_URL:-https://api.datamuse.com/words}
+      LS_EXTERNAL_API_KEY: ${LS_EXTERNAL_API_KEY:-}
     depends_on:
       postgres:
         condition: service_healthy
-      minio:
-        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
+    networks:
+      - app_net
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
       interval: 10s
       timeout: 5s
       retries: 10
+      start_period: 20s
 
   frontend:
     build:
       context: ./apps/frontend
       args:
-        NEXT_PUBLIC_API_BASE: /api/v1
+        NEXT_PUBLIC_API_BASE: ${NEXT_PUBLIC_API_BASE:-/api/v1}
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_BASE: ${NEXT_PUBLIC_API_BASE:-/api/v1}
     depends_on:
       api:
         condition: service_healthy
+    networks:
+      - app_net
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/legal >/dev/null 2>&1 || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 10
+      start_period: 20s
 
   nginx:
     image: nginx:1.27-alpine
+    restart: unless-stopped
     depends_on:
       frontend:
         condition: service_healthy
@@ -75,12 +118,19 @@ services:
       - "80:80"
     volumes:
       - ./deploy/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - app_net
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost/"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost/ >/dev/null 2>&1 || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 10
+      start_period: 10s
 
 volumes:
   postgres_data:
   minio_data:
+
+networks:
+  app_net:
+    driver: bridge

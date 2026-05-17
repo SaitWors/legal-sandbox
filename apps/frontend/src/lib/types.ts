@@ -27,7 +27,7 @@ export type ConflictFinding = FindingBase & {
   a: number;
   b: number;
   signal: "negation" | "numbers" | "modal" | "policy" | "other";
-  meta?: Record<string, any>;
+  meta?: Record<string, unknown>;
 };
 
 export type Finding = DuplicateFinding | ConflictFinding;

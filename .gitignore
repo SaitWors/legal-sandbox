@@ -1,16 +1,35 @@
-@"
-# python
-venv/
-.venv/
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.pyd
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
 
-# node/next
+# Node / Next.js
 node_modules/
 apps/frontend/.next/
+apps/frontend/out/
+apps/frontend/coverage/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+services/api/.env
 apps/frontend/.env.local
 
-# misc
+# Local data
+services/api/data/*.db
+services/api/data/uploads/
+postgres_data/
+minio_data/
+
+# OS / editors
 .DS_Store
-"@ | Out-File -Encoding utf8 .gitignore -Append
+Thumbs.db
+.vscode/
+.idea/

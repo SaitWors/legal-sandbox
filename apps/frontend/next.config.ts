@@ -1,11 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-<<<<<<< HEAD
-  /* config options here */
-=======
   output: "standalone",
->>>>>>> 73dd6ff (С 1й по 3ю и docker)
+  experimental: {
+    workerThreads: false,
+    cpus: 1,
+    staticGenerationRetryCount: 1,
+    staticGenerationMaxConcurrency: 1,
+    staticGenerationMinPagesPerWorker: 1000,
+  },
 };
 
 export default nextConfig;

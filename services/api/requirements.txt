@@ -2,11 +2,6 @@ fastapi
 uvicorn[standard]
 sqlmodel
 aiosqlite
-<<<<<<< HEAD
-python-jose[cryptography]
-passlib[bcrypt]
-python-multipart
-=======
 asyncpg
 python-jose[cryptography]
 passlib==1.7.4
@@ -17,4 +12,3 @@ boto3
 itsdangerous
 pytest
 httpx
->>>>>>> 73dd6ff (С 1й по 3ю и docker)

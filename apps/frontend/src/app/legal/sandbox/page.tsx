@@ -1,12 +1,5 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import LegalSandbox from "@/components/legal/LegalSandbox";
-
-export default function LegalSandboxPage() {
-  return (
-    <ProtectedRoute>
-      <LegalSandbox />
-    </ProtectedRoute>
-  );
+export default function LegacySandboxPage() {
+  redirect("/workspace");
 }
