@@ -19,4 +19,8 @@ def analyze_text(payload: AnalyzeRequest):
         "clauses": clauses,
         "findings": findings,
         "dup_threshold": payload.dup_threshold,
+        "summary": {
+            "clauses": len(clauses),
+            "findings": len(findings),
+        },
     }
